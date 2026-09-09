@@ -112,7 +112,9 @@ pre {
 .topbar {
   position: sticky; top: 0; z-index: 9;
   background: var(--bg);
-  padding: 12px 0 10px;
+  /* safe-area-inset-top clears the notch / Dynamic Island (bigger on
+     iPhone Air) when running in standalone PWA mode (viewport-fit=cover) */
+  padding: calc(10px + env(safe-area-inset-top)) 0 10px;
   border-bottom: 3px solid var(--line);
   margin-bottom: 16px;
 }
@@ -120,19 +122,20 @@ pre {
 .topbar .logo .blink { animation: blink 1.1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 .topbar .sub { font-size: 16px; color: var(--dim); margin-top: 6px; }
-.nav {
+.bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
   display: flex; justify-content: space-around; align-items: stretch;
   background: var(--panel);
   border-top: 3px solid var(--line);
+  /* safe-area-inset-bottom clears the home-indicator bar */
   padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
 }
-.nav a {
+.bottom-nav a {
   font-family: var(--pixel); font-size: 8px; color: var(--dim);
   text-transform: uppercase; text-align: center;
   padding: 8px 6px; flex: 1;
 }
-.nav a.on { color: var(--green); background: var(--panel2); border: 2px solid var(--green); }
+.bottom-nav a.on { color: var(--green); background: var(--panel2); border: 2px solid var(--green); }
 .badge {
   font-family: var(--pixel); font-size: 8px;
   background: var(--red); color: #fff;
