@@ -472,7 +472,11 @@ export async function allRepoFiles(): Promise<{ path: string; content: string; i
   await fsx.open();
   const out: { path: string; content: string; isDir: boolean }[] = [];
   const walk = async (dir: string): Promise<void> => {
-    const entries = await fsx.promises.readdir(dir).catch(() => []);
+    // skip .git — an early isomorphic-git build stored its own .git
+    // directory in this same IndexedDB; it is not repo content
+    const entries = (await fsx.promises.readdir(dir).catch(() => [])).filter(
+      (e) => e.name !== '.git'
+    );
     for (const e of entries) {
       const full = dir === ROOT ? `${dir}/${e.name}` : `${dir}/${e.name}`;
       if (e.isDirectory()) {
