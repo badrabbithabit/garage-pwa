@@ -248,6 +248,15 @@ export async function createRemoteRepo(cfg: AppConfig): Promise<{ ok: boolean; m
   });
   if (res.status === 201) return { ok: true, message: `Created ${cfg.user}/${cfg.repo} (private, initialized with README).` };
   if (res.status === 409) return { ok: true, message: `${cfg.user}/${cfg.repo} already exists — good.` };
+  if (res.status === 403) {
+    // Fine-grained PATs cannot create repos at all — check whether it already exists.
+    const g = await fetch(`https://api.github.com/repos/${cfg.user}/${cfg.repo}`, { headers: apiHeaders(cfg.pat) });
+    if (g.status === 200) return { ok: true, message: `${cfg.user}/${cfg.repo} already exists — good.` };
+    return {
+      ok: false,
+      message: `Token can't create repos (fine-grained PATs can't) and ${cfg.user}/${cfg.repo} was not found. Check the owner/repo spelling, or create the repo on GitHub first.`,
+    };
+  }
   const body = await res.text();
   return { ok: false, message: `GitHub API ${res.status}: ${body.slice(0, 200)}` };
 }
