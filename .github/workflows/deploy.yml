@@ -5,9 +5,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Pages is configured with build_type: "workflow" (set by scripts/push-to-github.mjs)
+# The Pages site is created by scripts/push-to-github.mjs (PUT /pages with a
+# branch source); the first successful deploy-pages run below switches the
+# site's source to this Actions workflow automatically.
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
